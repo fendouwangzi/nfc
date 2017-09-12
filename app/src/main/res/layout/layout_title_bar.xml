@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zzg.com.nfc.weiget.TitleBarView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/titleBar"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/colorTitle"
+    app:title_statusBarLightMode="true"
+    app:title_actionTextColor="@color/colorTextBlack"
+    app:title_dividerColor="@color/colorLineGray"
+    app:title_leftTextColor="@color/colorTextBlack"
+    app:title_leftTextDrawable="@drawable/ic_arrow_left"
+    app:title_rightTextColor="@color/colorTextBlack"
+    app:title_titleMainTextColor="@color/colorTextBlack"
+    app:title_titleSubTextColor="@color/colorTextBlack"/>
+
+
+
