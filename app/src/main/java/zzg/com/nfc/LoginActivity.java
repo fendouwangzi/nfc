@@ -198,6 +198,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+
         }
 
         if(!cancel){
