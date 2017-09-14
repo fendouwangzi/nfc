@@ -7,5 +7,4 @@ package zzg.com.nfc.common;
  */
 public class Const {
 
-    public
 }

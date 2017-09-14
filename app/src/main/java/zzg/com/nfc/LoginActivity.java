@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -71,9 +70,47 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "右边按钮", Toast.LENGTH_SHORT).show();
+                setIp();
             }
         });
+    }
+
+    private void setIp() {
+        new InputDialog.Builder(this)
+                .setTitle("新建文件夹")
+                .setInputDefaultText("/sdcard/my")
+                .setInputMaxWords(20)
+                .setInputHint("文件夹路径")
+                .setPositiveButton("确定", new InputDialog.ButtonActionListener() {
+                    @Override
+                    public void onClick(CharSequence inputText) {
+                        // TODO
+                    }
+                })
+                .setNegativeButton("取消", new InputDialog.ButtonActionListener() {
+                    @Override
+                    public void onClick(CharSequence inputText) {
+                        // TODO
+                    }
+                })
+                .setOnCancelListener(new InputDialog.OnCancelListener() {
+                    @Override
+                    public void onCancel(CharSequence inputText) {
+                        // TODO
+                    }
+                })
+                .interceptButtonAction(new InputDialog.ButtonActionIntercepter() { // 拦截按钮行为
+                    @Override
+                    public boolean onInterceptButtonAction(int whichButton, CharSequence inputText) {
+                        if ("/sdcard/my".equals(inputText) && whichButton == DialogInterface.BUTTON_POSITIVE) {
+                            // TODO 此文件夹已存在，在此做相应的提示处理
+                            // 以及return true拦截此按钮默认行为
+                            return true;
+                        }
+                        return false;
+                    }
+                })
+                .show();
     }
 
     private String getSubText() {
@@ -95,7 +132,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     @Override
     protected void initView(Bundle var1) {
-
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 

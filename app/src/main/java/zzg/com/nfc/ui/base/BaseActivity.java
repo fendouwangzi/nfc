@@ -1,16 +1,21 @@
 package zzg.com.nfc.ui.base;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import zzg.com.nfc.R;
 import zzg.com.nfc.util.AppUtil;
+import zzg.com.nfc.util.ToastUtils;
 import zzg.com.nfc.weiget.TitleBarView;
 
 /**
@@ -21,6 +26,7 @@ import zzg.com.nfc.weiget.TitleBarView;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private ProgressDialog mProgressDialog;
     protected TitleBarView titleBar;
     protected Activity mContext;
     protected boolean mIsFirstShow = true;
@@ -113,6 +119,53 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         super.onResume();
+    }
+
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+            mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
+            mProgressDialog.setMessage("请稍后。。。");
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        mProgressDialog.show();
+    }
+
+    public void setProgressDialogMsg(String message) {
+        if (mProgressDialog != null) {
+            mProgressDialog.setMessage(message);
+        }else {
+            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+            mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+    }
+
+    public void dismissProgressDialog() {
+
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    public void hideSoftKeyBoard(EditText editText) {
+        // 先隐藏键盘
+        try {
+            ((InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(getCurrentFocus()
+                                    .getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showMsg(String msg) {
+        ToastUtils.showShort(this, msg);
     }
 
 }

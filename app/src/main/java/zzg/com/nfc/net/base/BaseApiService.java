@@ -7,11 +7,14 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import sanocare.minute.clinic.BuildConfig;
-import sanocare.minute.clinic.net.FastJsonConvertFactory;
-import sanocare.minute.clinic.net.OkHttpFactory;
-import sanocare.minute.clinic.net.exception.ResultStatusEnum;
-import sanocare.minute.clinic.ui.base.BaseActivity;
+import zzg.com.nfc.BuildConfig;
+import zzg.com.nfc.net.FastJsonConvertFactory;
+import zzg.com.nfc.net.HttpResponse;
+import zzg.com.nfc.net.OkHttpFactory;
+import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.exception.ResultStatusEnum;
+import zzg.com.nfc.ui.base.BaseActivity;
+
 
 /**
  * Created by zhongzhigang on 2017/6/6.
@@ -55,8 +58,8 @@ public class BaseApiService {
         return mRetrofit.create(claz);
     }
 
-    protected <T> Observable.Transformer<sanocare.minute.clinic.net.HttpResponse<T>, T> applySchedulers() {
-        return (Observable.Transformer<sanocare.minute.clinic.net.HttpResponse<T>, T>) transformer;
+    protected <T> Observable.Transformer<HttpResponse<T>, T> applySchedulers() {
+        return (Observable.Transformer<HttpResponse<T>, T>) transformer;
     }
 
     final Observable.Transformer transformer = new Observable.Transformer() {
@@ -67,7 +70,7 @@ public class BaseApiService {
                     .flatMap(new Func1() {
                         @Override
                         public Object call(Object response) {
-                            return flatResponse((sanocare.minute.clinic.net.HttpResponse<Object>) response);
+                            return flatResponse((HttpResponse<Object>) response);
                         }
                     });
         }
@@ -80,7 +83,7 @@ public class BaseApiService {
      * @param <T>
      * @return
      */
-    public <T> Observable<T> flatResponse(final sanocare.minute.clinic.net.HttpResponse<T> response) {
+    public <T> Observable<T> flatResponse(final HttpResponse<T> response) {
         return Observable.create(new Observable.OnSubscribe<T>() {
 
             @Override
@@ -91,11 +94,11 @@ public class BaseApiService {
                     }
                 } else {
                     if (!subscriber.isUnsubscribed()) {
-                        sanocare.minute.clinic.net.exception.APIException apiException = new sanocare.minute.clinic.net.exception.APIException(ResultStatusEnum.valueOf(response.getStatus()), response.getMessage());
+                        APIException apiException = new APIException(ResultStatusEnum.valueOf(response.getStatus()), response.getMessage());
                         subscriber.onError(apiException);
                         if(apiException.doAction()){
                             if(context != null){
-                                context.login();
+//                                context.login();
                                 context.showMsg("登录失效，请重新登录");
                             }
                         }else {

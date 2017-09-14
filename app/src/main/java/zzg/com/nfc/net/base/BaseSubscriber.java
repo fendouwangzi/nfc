@@ -4,10 +4,10 @@ import android.os.Handler;
 import android.util.Log;
 
 import rx.Subscriber;
-import sanocare.minute.clinic.net.exception.APIException;
-import sanocare.minute.clinic.net.exception.ResultStatusEnum;
-import sanocare.minute.clinic.ui.base.BaseActivity;
-import sanocare.minute.clinic.util.CommonUtil;
+import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.exception.ResultStatusEnum;
+import zzg.com.nfc.ui.base.BaseActivity;
+import zzg.com.nfc.util.NetUtils;
 
 /**
  * @author zhongzhigang
@@ -27,7 +27,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
     @Override
     public void onStart() {
         super.onStart();
-        if (!CommonUtil.checkNetWork(context)) {
+        if (!NetUtils.hasNetwork(context)) {
             context.showMsg("网络不可用，请先确保网络畅通");
             onCompleted();
             return;

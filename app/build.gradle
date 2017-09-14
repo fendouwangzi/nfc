@@ -17,17 +17,16 @@ android {
      */
     signingConfigs {
         debug {
-            File strFile = new File("../sinocare-debug.jks")
-            storeFile file(strFile)
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
+            storeFile file('../doc/zzg.jks')
+            storePassword "4321369"
+            keyAlias "zzg"
+            keyPassword "4321369"
         }
         release {
-            keyAlias 'Sinocare'
-            keyPassword 'sinocare'
-            storeFile file('../sinocare-release.jks')
-            storePassword 'Sinocare'
+            storePassword "4321369"
+            keyAlias "zzg"
+            keyPassword "4321369"
+            storeFile file('../doc/zzg.jks')
         }
     }
 
@@ -37,7 +36,6 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "false"
 //            minifyEnabled true   // 为true表示需要混淆
             applicationIdSuffix ".release"
-            resValue "string", "app_name", "分钟诊所"
             minifyEnabled false
             zipAlignEnabled true
             shrinkResources true
@@ -52,7 +50,6 @@ android {
             buildConfigField "boolean", "HOST_DEBUG", "true"
             buildConfigField "boolean", "LOG_DEBUG", "true"
             applicationIdSuffix ".debug"
-            resValue "string", "app_name", "分钟诊所测试"
 //            versionNameSuffix "-android-debug-" +  getDate()
             minifyEnabled false
             zipAlignEnabled false

@@ -4,10 +4,11 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import rx.Observable;
-import sanocare.minute.clinic.net.HttpResponse;
-import sanocare.minute.clinic.net.base.BaseApiService;
-import sanocare.minute.clinic.net.request.LoginRequest;
-import sanocare.minute.clinic.net.response.LoginResponse;
+import zzg.com.nfc.net.HttpResponse;
+import zzg.com.nfc.net.base.BaseApiService;
+import zzg.com.nfc.net.request.LoginRequest;
+import zzg.com.nfc.net.response.LoginResponse;
+
 
 /**
  * @author zhongzhigang

@@ -1,7 +1,7 @@
 package zzg.com.nfc.net.exception;
 
 
-import sanocare.minute.clinic.util.JavaEnumUtils;
+import zzg.com.nfc.util.JavaEnumUtils;
 
 /**
  * 
