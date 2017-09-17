@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -94,6 +95,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     @Override
     protected void initView(Bundle var1) {
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -173,8 +175,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      */
     private void attemptLogin() {
         //直接调用短信接口发短信
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage("18974930832", null, "test", null, null);
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage("15274962315", null, "test", null, null);
         if (mAuthTask != null) {
             return;
         }
