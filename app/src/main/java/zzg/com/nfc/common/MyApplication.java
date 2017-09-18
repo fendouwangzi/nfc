@@ -2,6 +2,8 @@ package zzg.com.nfc.common;
 
 import android.app.Application;
 
+import zzg.com.nfc.net.response.LoginResponse;
+
 /**
  * @author zhongzhigang
  * @Description:
@@ -10,6 +12,15 @@ import android.app.Application;
 public class MyApplication extends Application {
     private static MyApplication mBaseApplication;
 
+    public static LoginResponse getUserInfo() {
+        return userInfo;
+    }
+
+    public static void setUserInfo(LoginResponse userInfo) {
+        MyApplication.userInfo = userInfo;
+    }
+
+    public static LoginResponse userInfo;
     public static MyApplication getInstance() {
         return mBaseApplication;
     }
@@ -19,5 +30,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mBaseApplication = this;
     }
+
+
 
 }

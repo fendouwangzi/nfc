@@ -10,11 +10,11 @@ import java.io.Serializable;
  * @date 2017/6/23
  */
 public class LoginRequest implements Serializable {
-    private String count;
-    private String password;
+    private String userkey;
+    private String userpwd;
 
-    public LoginRequest(String count, String password) {
-        this.count = count;
-        this.password = password;
+    public LoginRequest(String userkey, String userpwd) {
+        this.userkey = userkey;
+        this.userpwd = userpwd;
     }
 }

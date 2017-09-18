@@ -21,7 +21,7 @@ public class LoginService extends BaseApiService {
 
     private interface LoginServiceAPi {
 
-        @POST("/operation/user/login")
+        @POST("/api/auths/login")
         public Observable<HttpResponse<LoginResponse>> login(@Body LoginRequest loginRequest);
 
         @GET("/operation/user/logout")

@@ -16,12 +16,12 @@ android {
      * 签名设置
      */
     signingConfigs {
-        debug {
-            storeFile file('../doc/zzg.jks')
-            storePassword "4321369"
-            keyAlias "zzg"
-            keyPassword "4321369"
-        }
+//        debug {
+//            storeFile file('../doc/zzg.jks')
+//            storePassword "4321369"
+//            keyAlias "zzg"
+//            keyPassword "4321369"
+//        }
         release {
             storePassword "4321369"
             keyAlias "zzg"
@@ -72,7 +72,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
@@ -98,4 +98,5 @@ dependencies {
     compile 'com.github.Kennyc1012:MultiStateView:1.3.0'
     compile 'com.jiongbull:jlog:1.0.5'
     compile 'com.alibaba:fastjson:1.1.58.android'
+    compile files('src/main/libs/platform_sdk_v2.4.0810.jar')
 }

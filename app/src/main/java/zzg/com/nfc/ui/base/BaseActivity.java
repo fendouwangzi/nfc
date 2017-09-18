@@ -3,6 +3,7 @@ package zzg.com.nfc.ui.base;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.device.DeviceManager;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new DeviceManager().enableHomeKey(false);
         this.mContext = this;
         this.beforeSetView();
         this.setContentView(this.getLayout());
@@ -110,6 +112,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnBinder.unbind();
+        new DeviceManager().enableHomeKey(true);
     }
 
     protected void onResume() {
@@ -124,7 +127,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+//            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
             mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
             mProgressDialog.setMessage("请稍后。。。");
             mProgressDialog.setCancelable(false);
@@ -137,7 +140,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
         }else {
-            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+//            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
             mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(false);

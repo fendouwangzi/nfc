@@ -5,11 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -24,13 +24,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import zzg.com.nfc.net.api.LoginService;
+import zzg.com.nfc.net.base.BaseSubscriber;
+import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.request.LoginRequest;
+import zzg.com.nfc.net.response.LoginResponse;
 import zzg.com.nfc.ui.base.BaseActivity;
 import zzg.com.nfc.util.RomUtil;
+import zzg.com.nfc.weiget.InputDialog;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -54,7 +59,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+//    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -211,11 +216,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
      */
     private void attemptLogin() {
         //直接调用短信接口发短信
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage("15274962315", null, "test", null, null);
-        if (mAuthTask != null) {
-            return;
-        }
+//        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage("15274962315", null, "test", null, null);
 
         // Reset errors.
         mEmailView.setError(null);
@@ -246,13 +248,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 cancel = true;
             }
             // Check for a valid password, if the user entered one.
-            if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-                mPasswordView.setError(getString(R.string.error_invalid_password));
-                focusView = mPasswordView;
-                cancel = true;
-            }
+//            if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+//                mPasswordView.setError(getString(R.string.error_invalid_password));
+//                focusView = mPasswordView;
+//                cancel = true;
+//            }
         }
-
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -262,8 +263,24 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            LoginService.getLoginService().login(new LoginRequest(email,password)).subscribe(new BaseSubscriber<LoginResponse>(this) {
+
+                @Override
+                public void onCompleted() {
+                    super.onCompleted();
+                    showProgress(false);
+                }
+
+                @Override
+                protected void onError(APIException ex) {
+
+                }
+
+                @Override
+                public void onNext(LoginResponse loginResponse) {
+
+                }
+            });
         }
     }
 
@@ -271,6 +288,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         //TODO: Replace this with your own logic
 //        return email.contains("@");
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
+//        super.onBackPressed();
     }
 
     private boolean isPasswordValid(String password) {
@@ -369,61 +392,5 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 

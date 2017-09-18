@@ -32,8 +32,8 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
             onCompleted();
             return;
         }
-        // 显示进度条
-        context.showProgressDialog();
+//        // 显示进度条
+//        context.showProgressDialog();
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
             @Override
             public void run() {
                 //关闭等待进度条
-                context.dismissProgressDialog();
+//                context.dismissProgressDialog();
             }
         }, 500);
     }

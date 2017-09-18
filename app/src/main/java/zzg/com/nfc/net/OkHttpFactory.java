@@ -1,20 +1,20 @@
 package zzg.com.nfc.net;
 
 
-import java.io.File;
+import android.util.Base64;
+
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import zzg.com.nfc.common.MyApplication;
-import zzg.com.nfc.util.CacheUtil;
+import zzg.com.nfc.net.response.LoginResponse;
 import zzg.com.nfc.util.NetUtils;
 
 public class OkHttpFactory {
@@ -49,9 +49,9 @@ public class OkHttpFactory {
             okhttpBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
             okhttpBuilder.readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
             okhttpBuilder.writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-            String path = CacheUtil.getCacheDir(MyApplication.getInstance())+ File.separator+"httpcache";
-            File file = new File(path);
-            okhttpBuilder.cache(new Cache(file,10485760));
+//            String path = CacheUtil.getCacheDir(MyApplication.getInstance())+ File.separator+"httpcache";
+//            File file = new File(path);
+//            okhttpBuilder.cache(new Cache(file,10485760));
             mOkHttpClient = okhttpBuilder.build();
         }
         return mOkHttpClient;
@@ -66,14 +66,17 @@ public class OkHttpFactory {
         public Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
             String scc_token = "null";
-//            if(MyApplication.getInstance().userInfo != null){
-//                scc_token = MyApplication.getInstance().userInfo.getScc_token();
-//            }
+
+            if(MyApplication.getInstance().userInfo != null){
+                LoginResponse loginResponse = MyApplication.getInstance().userInfo;
+                scc_token = loginResponse.getAccountID() +":" + loginResponse.getUserKey()+":"+loginResponse.getIssuedToken()+"other";
+                scc_token = "Basic "+Base64.encodeToString(scc_token.getBytes(), Base64.DEFAULT);
+            }
 //            String userinfo = (String) SharedPreferencesUtils.get(SharedPreferencesUtils.MC_USERINFO, "");
 //            userinfo = URLEncoder.encode(userinfo, "UTF-8");
             Request request = original.newBuilder()
                     .method(original.method(), original.body())
-//                    .addHeader("sccToken",scc_token)//有效性验证字段
+                    .addHeader("Authorization",scc_token)//有效性验证字段
 //                    .addHeader("sccUser",userinfo)//与前端那边cookie格式相同
                     .addHeader("Platform-Type","app")//平台编号
                     .build();

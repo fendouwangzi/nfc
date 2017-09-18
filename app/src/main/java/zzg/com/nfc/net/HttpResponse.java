@@ -3,9 +3,27 @@ package zzg.com.nfc.net;
 
 public class HttpResponse<T> {
 
+    private boolean ok;
+
+    private boolean tokenexpired;
+
     private T data;
-    private int status;
-    private String message;
+
+    public boolean isOk() {
+        return ok;
+    }
+
+    public void setOk(boolean ok) {
+        this.ok = ok;
+    }
+
+    public boolean isTokenexpired() {
+        return tokenexpired;
+    }
+
+    public void setTokenexpired(boolean tokenexpired) {
+        this.tokenexpired = tokenexpired;
+    }
 
     public T getData() {
         return data;
@@ -13,21 +31,5 @@ public class HttpResponse<T> {
 
     public void setData(T data) {
         this.data = data;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

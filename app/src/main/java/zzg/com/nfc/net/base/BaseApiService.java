@@ -7,7 +7,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import zzg.com.nfc.BuildConfig;
 import zzg.com.nfc.net.FastJsonConvertFactory;
 import zzg.com.nfc.net.HttpResponse;
 import zzg.com.nfc.net.OkHttpFactory;
@@ -23,7 +22,7 @@ import zzg.com.nfc.ui.base.BaseActivity;
 public class BaseApiService {
     private static final String OFFICIAL_URL = "https://szyszz.com/";
     //    private static final String DEV_URL = "http://183.232.235.80:8080/";
-    private static final String DEV_URL = BuildConfig.HOST_DEBUG ?"http://118.178.189.178:8691":"http://mc.tmqyt.com";
+    private static final String DEV_URL = "http://selfgo.jios.org:666/";
 //    private static final String DEV_URL = BuildConfig.SN_DEBUG ?"http://118.178.189.178:8691":"http://192.168.150.93:8080";
 //        private static final String DEV_URL = "http://192.168.150.176:8090";
     public static final String BASE_URL = DEV_URL + "";
@@ -88,15 +87,15 @@ public class BaseApiService {
 
             @Override
             public void call(Subscriber<? super T> subscriber) {
-                if (response.getStatus() == ResultStatusEnum.SUCCESS.getCode()) {
+                if (response.isOk() && response.isTokenexpired()) {
                     if (!subscriber.isUnsubscribed()) {
                         subscriber.onNext(response.getData());
                     }
                 } else {
                     if (!subscriber.isUnsubscribed()) {
-                        APIException apiException = new APIException(ResultStatusEnum.valueOf(response.getStatus()), response.getMessage());
+                        APIException apiException = new APIException(ResultStatusEnum.valueOf(0), "失败");
                         subscriber.onError(apiException);
-                        if(apiException.doAction()){
+                        if(response.isOk() && !response.isTokenexpired()){
                             if(context != null){
 //                                context.login();
                                 context.showMsg("登录失效，请重新登录");
