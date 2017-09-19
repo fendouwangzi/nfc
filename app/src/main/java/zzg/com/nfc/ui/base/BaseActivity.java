@@ -127,7 +127,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {
-//            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
             mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
             mProgressDialog.setMessage("请稍后。。。");
             mProgressDialog.setCancelable(false);
@@ -140,7 +140,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
         }else {
-//            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
+            mProgressDialog = new ProgressDialog(this, R.style.common_dialog);
             mProgressDialog.setProgressDrawable(getResources().getDrawable(R.drawable.progress));
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(false);

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="platform_sdk_v2.4.0810">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/src/main/libs/platform_sdk_v2.4.0810.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
