@@ -1,8 +1,6 @@
 package zzg.com.nfc.net;
 
 
-import android.util.Base64;
-
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,9 +11,9 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okio.ByteString;
 import zzg.com.nfc.common.MyApplication;
 import zzg.com.nfc.net.response.LoginResponse;
-import zzg.com.nfc.util.NetUtils;
 
 public class OkHttpFactory {
 
@@ -69,8 +67,11 @@ public class OkHttpFactory {
 
             if(MyApplication.getInstance().userInfo != null){
                 LoginResponse loginResponse = MyApplication.getInstance().userInfo;
-                scc_token = loginResponse.getAccountID() +":" + loginResponse.getUserKey()+":"+loginResponse.getIssuedToken()+"other";
-                scc_token = "Basic "+Base64.encodeToString(scc_token.getBytes(), Base64.DEFAULT);
+                scc_token = loginResponse.getAccountID() +":" + loginResponse.getUserKey()+":"+loginResponse.getIssuedToken()+":other";
+//                scc_token = "Basic " + Base64.encodeToString(scc_token.getBytes(), Base64.DEFAULT);
+                byte[] bytes = scc_token.getBytes("ISO-8859-1");
+                String encoded = ByteString.of(bytes).base64();
+                scc_token = "Basic " + encoded;
             }
 //            String userinfo = (String) SharedPreferencesUtils.get(SharedPreferencesUtils.MC_USERINFO, "");
 //            userinfo = URLEncoder.encode(userinfo, "UTF-8");
@@ -94,7 +95,7 @@ public class OkHttpFactory {
 //                        .build();
 //            }
             Response originalResponse = chain.proceed(request);
-            if(NetUtils.hasNetwork(MyApplication.getInstance())){
+//            if(NetUtils.hasNetwork(MyApplication.getInstance())){
                 //有网的时候读接口上的@Headers里的配置，你可以在这里进行统一的设置
                 return originalResponse.newBuilder()
                         .header("Cache-Control", cacheControl)
@@ -103,11 +104,11 @@ public class OkHttpFactory {
 //                        .addHeader("SN-Visted","2")
 //                        .addHeader("SN-Signature",str)
                         .build();
-            }else{
-                return originalResponse.newBuilder()
-                        .header("Cache-Control", "public, only-if-cached, max-stale=2419200")
-                        .build();
-            }
+//            }else{
+//                return originalResponse.newBuilder()
+//                        .header("Cache-Control", "public, only-if-cached, max-stale=2419200")
+//                        .build();
+//            }
         }
     };
 

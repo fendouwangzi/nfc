@@ -1,14 +1,15 @@
 package zzg.com.nfc.net.api;
 
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
 import rx.Observable;
 import zzg.com.nfc.net.HttpResponse;
 import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.request.LoginRequest;
+import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.LoginResponse;
-
+import zzg.com.nfc.net.response.RefreshTokenResponse;
+import zzg.com.nfc.net.response.RegcardResponse;
 
 /**
  * @author zhongzhigang
@@ -24,8 +25,11 @@ public class LoginService extends BaseApiService {
         @POST("/api/auths/login")
         public Observable<HttpResponse<LoginResponse>> login(@Body LoginRequest loginRequest);
 
-        @GET("/operation/user/logout")
-        public Observable<HttpResponse<Boolean>> logout();
+        @POST("/api/auths/refreshtoken")
+        public Observable<HttpResponse<RefreshTokenResponse>> refreshToken();
+
+        @POST("/api/cards/regcard")
+        public Observable<HttpResponse<RegcardResponse>> regCard(@Body RegcardRequest regcardRequest);
 
     }
 
@@ -39,26 +43,22 @@ public class LoginService extends BaseApiService {
         return INSTANCE;
     }
 
-    /**
-     * param count
-     * loginRequestram password
-     *
-     * @return
-     */
+
     public Observable<LoginResponse> login(LoginRequest loginRequest) {
         return createRetrofit(LoginService.LoginServiceAPi.class)
                 .login(loginRequest)
                 .compose(this.<LoginResponse>applySchedulers());
     }
 
-    /**
-     * param count
-     loginRequestram password
-     * @return
-     */
-    public Observable<Boolean> logout() {
+    public Observable<RefreshTokenResponse> refreshToken() {
         return createRetrofit(LoginService.LoginServiceAPi.class)
-                .logout()
-                .compose(this.<Boolean>applySchedulers());
+                .refreshToken()
+                .compose(this.<RefreshTokenResponse>applySchedulers());
+    }
+
+    public Observable<RegcardResponse> regCard(RegcardRequest regcardRequest) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .regCard(regcardRequest)
+                .compose(this.<RegcardResponse>applySchedulers());
     }
 }

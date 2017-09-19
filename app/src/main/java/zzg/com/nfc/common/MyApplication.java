@@ -31,6 +31,4 @@ public class MyApplication extends Application {
         mBaseApplication = this;
     }
 
-
-
 }

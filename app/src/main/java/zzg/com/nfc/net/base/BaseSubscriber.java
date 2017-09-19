@@ -33,7 +33,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
             return;
         }
 //        // 显示进度条
-//        context.showProgressDialog();
+        context.showProgressDialog();
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
             @Override
             public void run() {
                 //关闭等待进度条
-//                context.dismissProgressDialog();
+                context.dismissProgressDialog();
             }
         }, 500);
     }
@@ -55,7 +55,7 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
         } else {
             Log.e("zgzg","eee----------="+e.toString());
 //            context.showMsg("网络异常");
-            onError(new APIException(ResultStatusEnum.NETWORK_CANNOT_LINK,ResultStatusEnum.NETWORK_CANNOT_LINK.description));
+            onError(new APIException(ResultStatusEnum.NETWORK_CANNOT_LINK,e.getMessage()));
         }
         onCompleted();
     }

@@ -1,9 +1,11 @@
 package zzg.com.nfc.net;
 
 
-public class HttpResponse<T> {
+public class HttpResponse<T > {
 
     private boolean ok;
+
+    private String message;
 
     private boolean tokenexpired;
 
@@ -31,5 +33,13 @@ public class HttpResponse<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

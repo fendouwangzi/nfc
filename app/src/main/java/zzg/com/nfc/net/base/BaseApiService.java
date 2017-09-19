@@ -87,18 +87,16 @@ public class BaseApiService {
 
             @Override
             public void call(Subscriber<? super T> subscriber) {
-                if (response.isOk() && response.isTokenexpired()) {
+                if (response.isOk()) {
                     if (!subscriber.isUnsubscribed()) {
                         subscriber.onNext(response.getData());
                     }
                 } else {
                     if (!subscriber.isUnsubscribed()) {
-                        APIException apiException = new APIException(ResultStatusEnum.valueOf(0), "失败");
-                        subscriber.onError(apiException);
-                        if(response.isOk() && !response.isTokenexpired()){
+                        APIException apiException = new APIException(ResultStatusEnum.valueOf(0), response.getMessage());
+                        if(response.isTokenexpired()){
                             if(context != null){
-//                                context.login();
-                                context.showMsg("登录失效，请重新登录");
+                                context.refreshToken();
                             }
                         }else {
                             subscriber.onError(apiException);

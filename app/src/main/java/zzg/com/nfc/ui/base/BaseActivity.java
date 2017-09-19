@@ -15,6 +15,10 @@ import android.widget.EditText;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import zzg.com.nfc.R;
+import zzg.com.nfc.net.api.LoginService;
+import zzg.com.nfc.net.base.BaseSubscriber;
+import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.response.RefreshTokenResponse;
 import zzg.com.nfc.util.AppUtil;
 import zzg.com.nfc.util.ToastUtils;
 import zzg.com.nfc.weiget.TitleBarView;
@@ -169,6 +173,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showMsg(String msg) {
         ToastUtils.showShort(this, msg);
+    }
+
+
+    public void refreshToken(){
+        LoginService.getLoginService().refreshToken().subscribe(new BaseSubscriber<RefreshTokenResponse>(this) {
+            @Override
+            protected void onError(APIException ex) {
+
+            }
+
+            @Override
+            public void onNext(RefreshTokenResponse refreshTokenResponse) {
+
+            }
+        });
     }
 
 }
