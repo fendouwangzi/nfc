@@ -10,7 +10,6 @@
     app:title_actionTextColor="@color/colorTextBlack"
     app:title_dividerColor="@color/colorLineGray"
     app:title_leftTextColor="@color/colorTextBlack"
-    app:title_leftTextDrawable="@drawable/ic_arrow_left"
     app:title_rightTextColor="@color/colorTextBlack"
     app:title_titleMainTextColor="@color/colorTextBlack"
     app:title_titleSubTextColor="@color/colorTextBlack"/>

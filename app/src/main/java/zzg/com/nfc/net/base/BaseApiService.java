@@ -20,9 +20,8 @@ import zzg.com.nfc.ui.base.BaseActivity;
  */
 
 public class BaseApiService {
-    private static final String OFFICIAL_URL = "https://szyszz.com/";
     //    private static final String DEV_URL = "http://183.232.235.80:8080/";
-    private static final String DEV_URL = "http://selfgo.jios.org:666/";
+    public static  String DEV_URL = "http://selfgo.jios.org:666/";
 //    private static final String DEV_URL = BuildConfig.SN_DEBUG ?"http://118.178.189.178:8691":"http://192.168.150.93:8080";
 //        private static final String DEV_URL = "http://192.168.150.176:8090";
     public static final String BASE_URL = DEV_URL + "";

@@ -7,15 +7,17 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.List;
+
 import zzg.com.nfc.net.api.LoginService;
 import zzg.com.nfc.net.base.BaseSubscriber;
 import zzg.com.nfc.net.exception.APIException;
-import zzg.com.nfc.net.request.RegcardRequest;
-import zzg.com.nfc.net.response.RegcardResponse;
+import zzg.com.nfc.net.response.OrderDetailsResponse;
 import zzg.com.nfc.ui.base.BaseActivity;
 
 public class RegcardActivity extends BaseActivity {
@@ -30,18 +32,12 @@ public class RegcardActivity extends BaseActivity {
     private String[][] mTechLists;
     private int mCount = 0;
 
-
     @Override
     protected void setTitleBar() {
-        titleBar.setTitleMainText("标题栏神器");
-//        titleBar.setTitleSubText(getSubText());
-        titleBar.setRightTextDrawable(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                setIp();
-            }
-        });
+        titleBar.setTitleMainText("主界面");
+        titleBar.setLeftText("订单列表");
+        titleBar.setRightText("录入卡");
+
     }
 
     @Override
@@ -49,7 +45,6 @@ public class RegcardActivity extends BaseActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         Log.d(TAG,"onNewIntent--------------");
-        mText.setText("发现新的 Tag:  " + ++mCount + "\n");// mCount 计数
         String intentActionStr = intent.getAction();// 获取到本次启动的action
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intentActionStr)// NDEF类型
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(intentActionStr)// 其他类型
@@ -59,9 +54,10 @@ public class RegcardActivity extends BaseActivity {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             byte[] bytesId = tag.getId();// 获取id数组
             String info = "";
-            info += ByteArrayToHexString(bytesId) + "\n";
-            mText.setText("标签UID:  " + "\n" + HexToInt(info));
-            Log.d(TAG,"onNewIntent-----------info---"+HexToInt(info));
+            info += ByteArrayToHexString(bytesId);
+            mText.setText("标签UID:  " + "\n" + info);
+            cardNum = info;
+            Log.d(TAG,"onNewIntent-----------info---"+info);
         }
     }
 
@@ -199,21 +195,53 @@ public class RegcardActivity extends BaseActivity {
 
         // 根据标签类型设置
         mTechLists = new String[][] { new String[] { NfcA.class.getName() } };
-    }
-
-    public void submit(View view){
-        cardNum = "dddddd";
-        LoginService.getLoginService().regCard(new RegcardRequest(cardNum)).subscribe(new BaseSubscriber<RegcardResponse>(this) {
+        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
             @Override
-            protected void onError(APIException ex) {
-                        showMsg(ex.getMessage());
+            public void onClick(View v) {
+//                setIp();
             }
-
+        });
+        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
-            public void onNext(RegcardResponse regcardResponse) {
+            public void onClick(View view) {
 
             }
         });
+    }
+
+    public void getOrder(String  cardKey){
+            LoginService.getLoginService(this).getorders(cardKey).subscribe(new BaseSubscriber<List<OrderDetailsResponse>>(this) {
+                @Override
+                protected void onError(APIException ex) {
+
+                }
+
+                @Override
+                public void onNext(List<OrderDetailsResponse> orderDetailsResponses) {
+
+                }
+            });
+    }
+
+    public void submit(View view){
+        if(TextUtils.isEmpty(cardNum)){
+            showMsg("请先刷卡");
+            return;
+        }
+        getOrder(cardNum);
+//        LoginService.getLoginService(this).regCard(new RegcardRequest(cardNum)).subscribe(new BaseSubscriber<RegcardResponse>(this) {
+//            @Override
+//            protected void onError(APIException ex) {
+//                        showMsg(ex.getMessage());
+//            }
+//
+//            @Override
+//            public void onNext(RegcardResponse regcardResponse) {
+//                getOrder(cardNum);
+//                cardNum = "";
+//
+//            }
+//        });
     }
 
 }

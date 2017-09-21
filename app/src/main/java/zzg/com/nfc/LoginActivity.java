@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import zzg.com.nfc.common.MyApplication;
 import zzg.com.nfc.net.api.LoginService;
+import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.base.BaseSubscriber;
 import zzg.com.nfc.net.exception.APIException;
 import zzg.com.nfc.net.request.LoginRequest;
@@ -28,13 +31,14 @@ import zzg.com.nfc.weiget.InputDialog;
  */
 public class LoginActivity extends BaseActivity  {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mLoginFormView;
 
     @Override
     protected void setTitleBar() {
-        titleBar.setTitleMainText("标题栏神器");
+        titleBar.setTitleMainText("客户端");
 //        titleBar.setTitleSubText(getSubText());
         titleBar.setRightTextDrawable(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
@@ -43,18 +47,22 @@ public class LoginActivity extends BaseActivity  {
                 setIp();
             }
         });
+        titleBar.setLeftTextBackgroundResource(R.drawable.white);
+        titleBar.setLeftTextDrawable(R.drawable.white);
+
     }
 
     private void setIp() {
         new InputDialog.Builder(this)
-                .setTitle("新建文件夹")
-                .setInputDefaultText("/sdcard/my")
-                .setInputMaxWords(20)
-                .setInputHint("文件夹路径")
+                .setTitle("设置服务器地址")
+                .setInputDefaultText("http://")
+                .setInputMaxWords(200)
+                .setInputHint("http://")
                 .setPositiveButton("确定", new InputDialog.ButtonActionListener() {
                     @Override
                     public void onClick(CharSequence inputText) {
-                        // TODO
+                        if(!TextUtils.isEmpty(inputText))
+                        BaseApiService.DEV_URL = inputText + "";
                     }
                 })
                 .setNegativeButton("取消", new InputDialog.ButtonActionListener() {
@@ -125,6 +133,12 @@ public class LoginActivity extends BaseActivity  {
         });
 
         mLoginFormView = findViewById(R.id.login_form);
+        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                threeClickFinish();
+            }
+        });
     }
 
     /**
@@ -180,7 +194,7 @@ public class LoginActivity extends BaseActivity  {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            LoginService.getLoginService().login(new LoginRequest(email,password)).subscribe(new BaseSubscriber<LoginResponse>(this) {
+            LoginService.getLoginService(this).login(new LoginRequest(email,password)).subscribe(new BaseSubscriber<LoginResponse>(this) {
 
                 @Override
                 public void onCompleted() {
@@ -209,8 +223,20 @@ public class LoginActivity extends BaseActivity  {
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG,"onBackPressed--------------");
         return;
-//        super.onBackPressed();
+    }
+
+    private long[] mHits = new long[10]; // 数组长度代表点击次数
+
+    private void threeClickFinish() {
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+        if (mHits[0] >= (SystemClock.uptimeMillis() - 2000)) {
+            Intent home=new Intent(Intent.ACTION_MAIN);
+            home.addCategory(Intent.CATEGORY_HOME);
+            startActivity(home);
+        }
     }
 
 }

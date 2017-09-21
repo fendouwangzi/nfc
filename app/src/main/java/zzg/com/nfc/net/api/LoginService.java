@@ -1,15 +1,21 @@
 package zzg.com.nfc.net.api;
 
+import java.util.List;
+
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import rx.Observable;
 import zzg.com.nfc.net.HttpResponse;
 import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.request.LoginRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.LoginResponse;
+import zzg.com.nfc.net.response.OrderDetailsResponse;
 import zzg.com.nfc.net.response.RefreshTokenResponse;
 import zzg.com.nfc.net.response.RegcardResponse;
+import zzg.com.nfc.ui.base.BaseActivity;
 
 /**
  * @author zhongzhigang
@@ -31,15 +37,20 @@ public class LoginService extends BaseApiService {
         @POST("/api/cards/regcard")
         public Observable<HttpResponse<RegcardResponse>> regCard(@Body RegcardRequest regcardRequest);
 
+        @GET("/api/orders/getorders/{cardkey}")
+        public Observable<HttpResponse<List<OrderDetailsResponse>>> getorders(@Path("cardkey") String cardkey);
     }
 
-    private static final LoginService INSTANCE = new LoginService();
+    private static LoginService INSTANCE;
 
-    private LoginService() {
-
+    private LoginService(BaseActivity content) {
+            super(content);
     }
 
-    public static LoginService getLoginService() {
+    public static LoginService getLoginService(BaseActivity content) {
+        if(INSTANCE == null){
+            INSTANCE = new LoginService(content);
+        }
         return INSTANCE;
     }
 
@@ -60,5 +71,11 @@ public class LoginService extends BaseApiService {
         return createRetrofit(LoginService.LoginServiceAPi.class)
                 .regCard(regcardRequest)
                 .compose(this.<RegcardResponse>applySchedulers());
+    }
+
+    public Observable<List<OrderDetailsResponse>> getorders(String cardkey) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .getorders(cardkey)
+                .compose(this.<List<OrderDetailsResponse>>applySchedulers());
     }
 }

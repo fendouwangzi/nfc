@@ -45,7 +45,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".RegcardActivity">
+        <activity android:name=".RegcardActivity"
+            >
 
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />

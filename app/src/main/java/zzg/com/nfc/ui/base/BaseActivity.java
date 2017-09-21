@@ -9,6 +9,8 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -61,7 +63,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//
         super.onCreate(savedInstanceState);
+
         new DeviceManager().enableHomeKey(false);
         this.mContext = this;
         this.beforeSetView();
@@ -177,7 +182,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     public void refreshToken(){
-        LoginService.getLoginService().refreshToken().subscribe(new BaseSubscriber<RefreshTokenResponse>(this) {
+        LoginService.getLoginService(this).refreshToken().subscribe(new BaseSubscriber<RefreshTokenResponse>(this) {
             @Override
             protected void onError(APIException ex) {
 
