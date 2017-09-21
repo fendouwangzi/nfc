@@ -99,4 +99,5 @@ dependencies {
     compile 'com.jiongbull:jlog:1.0.5'
     compile 'com.alibaba:fastjson:1.1.58.android'
     compile files('src/main/libs/platform_sdk_v2.4.0810.jar')
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
 }

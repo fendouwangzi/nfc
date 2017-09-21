@@ -7,9 +7,12 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,7 +26,9 @@ import zzg.com.nfc.ui.base.BaseActivity;
 public class RegcardActivity extends BaseActivity {
 
     private static final String TAG = RegcardActivity.class.getSimpleName();
-    TextView mText;
+    private TextView mText;
+    private RecyclerView recylerView;
+    private RelativeLayout rel_layout;
     private String cardNum = null;
 
     private NfcAdapter mNfcAdapter;
@@ -181,6 +186,11 @@ public class RegcardActivity extends BaseActivity {
     @Override
     protected void initView(Bundle var1) {
         mText = (TextView)findViewById(R.id.text) ;
+        recylerView = (RecyclerView)findViewById(R.id.id_recyclerview);
+        HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,null);
+        recylerView.setLayoutManager(new LinearLayoutManager(this));
+        recylerView.setAdapter(adaptoor);
+        rel_layout =(RelativeLayout)findViewById(R.id.rel_layout);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -199,14 +209,18 @@ public class RegcardActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 //                setIp();
+                recylerView.setVisibility(View.VISIBLE);
+                rel_layout.setVisibility(View.GONE);
             }
         });
         titleBar.setOnRightTextClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                recylerView.setVisibility(View.GONE);
+                rel_layout.setVisibility(View.VISIBLE);
             }
         });
+        recylerView.setVisibility(View.GONE);
     }
 
     public void getOrder(String  cardKey){
@@ -218,7 +232,9 @@ public class RegcardActivity extends BaseActivity {
 
                 @Override
                 public void onNext(List<OrderDetailsResponse> orderDetailsResponses) {
-
+                    HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,orderDetailsResponses);
+                    recylerView.setAdapter(adaptoor);
+                    recylerView.setVisibility(View.VISIBLE);
                 }
             });
     }
