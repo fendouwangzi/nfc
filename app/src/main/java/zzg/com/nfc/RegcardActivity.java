@@ -39,10 +39,9 @@ public class RegcardActivity extends BaseActivity {
 
     @Override
     protected void setTitleBar() {
-        titleBar.setTitleMainText("主界面");
-        titleBar.setLeftText("订单列表");
-        titleBar.setRightText("录入卡");
-
+        titleBar.getTitle().setText("主界面");
+        titleBar.getLeft_button().setText("订单列表");
+        titleBar.getRight_button().setText("录入卡");
     }
 
     @Override
@@ -205,7 +204,7 @@ public class RegcardActivity extends BaseActivity {
 
         // 根据标签类型设置
         mTechLists = new String[][] { new String[] { NfcA.class.getName() } };
-        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+        titleBar.getLeft_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                setIp();
@@ -213,7 +212,7 @@ public class RegcardActivity extends BaseActivity {
                 rel_layout.setVisibility(View.GONE);
             }
         });
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+        titleBar.getRight_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 recylerView.setVisibility(View.GONE);

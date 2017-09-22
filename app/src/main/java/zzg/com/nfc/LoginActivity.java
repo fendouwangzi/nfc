@@ -38,18 +38,16 @@ public class LoginActivity extends BaseActivity  {
 
     @Override
     protected void setTitleBar() {
-        titleBar.setTitleMainText("客户端");
+        titleBar.getTitle().setText("客户端");
 //        titleBar.setTitleSubText(getSubText());
-        titleBar.setRightTextDrawable(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
-        titleBar.setOnRightTextClickListener(new View.OnClickListener() {
+        titleBar.getRight_button().setBackgroundResource(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
+        titleBar.getRight_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setIp();
             }
         });
-        titleBar.setLeftTextBackgroundResource(R.drawable.white);
-        titleBar.setLeftTextDrawable(R.drawable.white);
-
+        titleBar.getLeft_button().setBackgroundResource(R.drawable.white);
     }
 
     private void setIp() {
@@ -133,7 +131,7 @@ public class LoginActivity extends BaseActivity  {
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
+        titleBar.getLeft_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 threeClickFinish();

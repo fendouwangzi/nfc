@@ -23,7 +23,7 @@ import zzg.com.nfc.net.exception.APIException;
 import zzg.com.nfc.net.response.RefreshTokenResponse;
 import zzg.com.nfc.util.AppUtil;
 import zzg.com.nfc.util.ToastUtils;
-import zzg.com.nfc.weiget.TitleBarView;
+import zzg.com.nfc.weiget.CustomTitleBar;
 
 /**
  * Created: AriesHoo on 2017/7/3 16:04
@@ -34,7 +34,7 @@ import zzg.com.nfc.weiget.TitleBarView;
 public abstract class BaseActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
-    protected TitleBarView titleBar;
+    protected CustomTitleBar titleBar;
     protected Activity mContext;
     protected boolean mIsFirstShow = true;
     private Unbinder mUnBinder;
@@ -78,27 +78,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void initTitle() {
-        titleBar = (TitleBarView) findViewById(R.id.titleBar);
+        titleBar = (CustomTitleBar) findViewById(R.id.titleBar);
         if (titleBar == null) {
             return;
         }
-        type = titleBar.getStatusBarModeType();
-        if (type <= 0) {//无法设置白底黑字
-            titleBar.setStatusAlpha(102);//5.0 半透明模式alpha-102
-        }
-        titleBar.setTitleMainText(mContext.getClass().getSimpleName());
         setTitleBar();
-        titleBar.setOnLeftTextClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        setTitleLine(isShowLine());
-    }
-
-    public void setTitleLine(boolean enable) {
-        titleBar.setDividerVisible(enable);
     }
 
     public void startActivity(Activity mContext, Class<? extends Activity> activity, Bundle bundle) {
