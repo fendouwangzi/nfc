@@ -32,7 +32,7 @@
         <Button
             android:onClick="submit"
             android:text="录入卡"
-            android:textSize="30px"
+            android:textSize="25px"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="50dp"
