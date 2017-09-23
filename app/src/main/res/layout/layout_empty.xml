@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+    android:layout_marginTop="100px">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="200px"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="暂时没有订单"
+        android:textSize="30px"/>
+</FrameLayout>

@@ -10,8 +10,10 @@ import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.gsm.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,12 +21,18 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import zzg.com.nfc.net.api.LoginService;
 import zzg.com.nfc.net.base.BaseSubscriber;
 import zzg.com.nfc.net.exception.APIException;
 import zzg.com.nfc.net.request.PayRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
+import zzg.com.nfc.net.response.AllMessageResponse;
 import zzg.com.nfc.net.response.OrderDetailsResponse;
 import zzg.com.nfc.net.response.PayResponse;
 import zzg.com.nfc.net.response.RegcardResponse;
@@ -46,10 +54,11 @@ public class RegcardActivity extends BaseActivity {
     private String[][] mTechLists;
     private int mCount = 0;
     private int nowType = 0;
+    private HomeAdapter adaptoor;
 
     @Override
     protected void setTitleBar() {
-        titleBar.getTitle().setText("主界面");
+        titleBar.getTitle().setText("订单列表");
         titleBar.getLeft_button().setText("切换用户");
         titleBar.getRight_button().setText("录入卡");
     }
@@ -200,7 +209,9 @@ public class RegcardActivity extends BaseActivity {
     protected void initView(Bundle var1) {
         mText = (TextView)findViewById(R.id.text) ;
         recylerView = (RecyclerView)findViewById(R.id.id_recyclerview);
-        HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,null);
+         adaptoor = new HomeAdapter(R.layout.order_item,null);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_empty,null);
+        adaptoor.setEmptyView(view);
         recylerView.setLayoutManager(new LinearLayoutManager(this));
         recylerView.setAdapter(adaptoor);
         rel_layout =(RelativeLayout)findViewById(R.id.rel_layout);
@@ -230,6 +241,7 @@ public class RegcardActivity extends BaseActivity {
             public void onClick(View view) {
                 if(nowType == 1){
                     nowType =2;
+                    titleBar.getTitle().setText("磁卡录入");
                     titleBar.setRight_button_text("返回订单");
                     recylerView.setVisibility(View.GONE);
                     rel_layout.setVisibility(View.VISIBLE);
@@ -237,10 +249,12 @@ public class RegcardActivity extends BaseActivity {
                 }else if(nowType == 2){
                     nowType =1;
                     titleBar.setRight_button_text("录入卡");
+                    titleBar.getTitle().setText("客户订单");
                     recylerView.setVisibility(View.VISIBLE);
                     rel_layout.setVisibility(View.GONE);
                 }else if(nowType == 3){
                     nowType =0;
+                    titleBar.getTitle().setText("订单列表");
                     titleBar.setRight_button_text("录入卡");
                     cardNum = "";
                     getOrder("");
@@ -249,6 +263,7 @@ public class RegcardActivity extends BaseActivity {
         });
         recylerView.setVisibility(View.GONE);
         getOrder("");
+        getAllmessageThread();
     }
 
     public void getOrder(String  cardKey){
@@ -274,13 +289,14 @@ public class RegcardActivity extends BaseActivity {
         public void onNext(List<OrderDetailsResponse> orderDetailsResponses) {
             if(nowType == 1){
                 nowType = 3;
+                titleBar.getTitle().setText("客户订单");
                 titleBar.getRight_button().setText("所有订单");
             }else if(nowType == 0){
                 nowType = 1;
             }
-            HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,orderDetailsResponses);
-            recylerView.setAdapter(adaptoor);
+            adaptoor.replaceData(orderDetailsResponses);
             recylerView.setVisibility(View.VISIBLE);
+
             final DividerItemDecoration2 dividerItemDecoration=new DividerItemDecoration2(RegcardActivity.this);
             dividerItemDecoration.setOnlySetItemOffsetsButNoDraw(true);
             recylerView.addItemDecoration(dividerItemDecoration);
@@ -370,4 +386,42 @@ public class RegcardActivity extends BaseActivity {
         });
     }
 
+    private void getAllmessageThread(){
+        Observable.interval(1, TimeUnit.MINUTES).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Long>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        allMessageHttp();
+                    }
+                });
+
+    }
+
+    private void allMessageHttp(){
+        LoginService.getLoginService(RegcardActivity.this).getAllMessage().subscribe(new BaseSubscriber<List<AllMessageResponse>>(this) {
+            @Override
+            protected void onError(APIException ex) {
+
+            }
+
+            @Override
+            public void onNext(List<AllMessageResponse> allMessageResponses) {
+                for (AllMessageResponse allMessageResponse : allMessageResponses) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage("18974931832", null, allMessageResponse.getContent(), null, null);
+                }
+            }
+        });
+    }
 }

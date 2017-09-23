@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">nfc</string>
+    <string name="app_name">授信支付系统</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">用户名</string>

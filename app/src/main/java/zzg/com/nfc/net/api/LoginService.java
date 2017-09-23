@@ -12,6 +12,7 @@ import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.request.LoginRequest;
 import zzg.com.nfc.net.request.PayRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
+import zzg.com.nfc.net.response.AllMessageResponse;
 import zzg.com.nfc.net.response.LoginResponse;
 import zzg.com.nfc.net.response.OrderDetailsResponse;
 import zzg.com.nfc.net.response.PayResponse;
@@ -47,6 +48,9 @@ public class LoginService extends BaseApiService {
 
         @GET("/api/orders/orders")
         public Observable<HttpResponse<List<OrderDetailsResponse>>> getAllOrders();
+
+        @GET("/api/timers/message")
+        public Observable<HttpResponse<List<AllMessageResponse>>> allMessage();
 
     }
 
@@ -98,5 +102,11 @@ public class LoginService extends BaseApiService {
         return createRetrofit(LoginService.LoginServiceAPi.class)
                 .getAllOrders()
                 .compose(this.<List<OrderDetailsResponse>>applySchedulers());
+    }
+
+    public Observable<List<AllMessageResponse>> getAllMessage( ) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .allMessage()
+                .compose(this.<List<AllMessageResponse>>applySchedulers());
     }
 }

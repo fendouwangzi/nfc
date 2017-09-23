@@ -38,7 +38,7 @@ public class LoginActivity extends BaseActivity  {
 
     @Override
     protected void setTitleBar() {
-        titleBar.getTitle().setText("客户端");
+        titleBar.getTitle().setText("授信支付系统");
 //        titleBar.setTitleSubText(getSubText());
 //        titleBar.getRight_button().setBackgroundResource(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
         titleBar.getRight_button().setOnClickListener(new View.OnClickListener() {
@@ -147,8 +147,7 @@ public class LoginActivity extends BaseActivity  {
      */
     private void attemptLogin() {
         //直接调用短信接口发短信
-//        SmsManager smsManager = SmsManager.getDefault();
-//        smsManager.sendTextMessage("15274962315", null, "test", null, null);
+
 
         // Reset errors.
         mEmailView.setError(null);
