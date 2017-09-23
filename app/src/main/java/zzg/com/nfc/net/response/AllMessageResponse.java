@@ -5,6 +5,7 @@ package zzg.com.nfc.net.response;
  */
 
 public class AllMessageResponse {
+    private  String MessageID;
     private String Tel;
 
     private String Manager;
@@ -73,5 +74,13 @@ public class AllMessageResponse {
 
     public void setSuccess(boolean success) {
         Success = success;
+    }
+
+    public String getMessageID() {
+        return MessageID;
+    }
+
+    public void setMessageID(String messageID) {
+        MessageID = messageID;
     }
 }

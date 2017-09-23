@@ -242,6 +242,7 @@ public class RegcardActivity extends BaseActivity {
             public void onClick(View view) {
                 if(nowType == 1){
                     nowType =2;
+                    cardNum = "";
                     titleBar.getTitle().setText("磁卡录入");
                     titleBar.setRight_button_text("返回订单");
                     recylerView.setVisibility(View.GONE);
@@ -253,6 +254,7 @@ public class RegcardActivity extends BaseActivity {
                     titleBar.getTitle().setText("客户订单");
                     recylerView.setVisibility(View.VISIBLE);
                     rel_layout.setVisibility(View.GONE);
+                    cardNum = "";
                 }else if(nowType == 3){
                     nowType =0;
                     titleBar.getTitle().setText("订单列表");
@@ -426,7 +428,7 @@ public class RegcardActivity extends BaseActivity {
             public void onNext(List<AllMessageResponse> allMessageResponses) {
                 for (AllMessageResponse allMessageResponse : allMessageResponses) {
                     SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage("18974931832", null, allMessageResponse.getContent(), null, null);
+                    smsManager.sendTextMessage(allMessageResponse.getTel(), null, allMessageResponse.getContent(), null, null);
                     sendMessageHttp(allMessageResponse);
                 }
             }
@@ -434,7 +436,7 @@ public class RegcardActivity extends BaseActivity {
     }
 
     private void sendMessageHttp(AllMessageResponse allMessageResponse) {
-        LoginService.getLoginService(RegcardActivity.this).messageSend(new MessageSendRequest(allMessageResponse.getManager())).subscribe(new BaseSubscriber<RegcardResponse>(this) {
+        LoginService.getLoginService(RegcardActivity.this).messageSend(new MessageSendRequest(allMessageResponse.getMessageID())).subscribe(new BaseSubscriber<RegcardResponse>(this) {
 
             @Override
             public void onStart() {
