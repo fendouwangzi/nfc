@@ -30,6 +30,7 @@ import rx.schedulers.Schedulers;
 import zzg.com.nfc.net.api.LoginService;
 import zzg.com.nfc.net.base.BaseSubscriber;
 import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.request.MessageSendRequest;
 import zzg.com.nfc.net.request.PayRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.AllMessageResponse;
@@ -410,6 +411,12 @@ public class RegcardActivity extends BaseActivity {
 
     private void allMessageHttp(){
         LoginService.getLoginService(RegcardActivity.this).getAllMessage().subscribe(new BaseSubscriber<List<AllMessageResponse>>(this) {
+
+            @Override
+            public void onStart() {
+//                super.onStart();
+            }
+
             @Override
             protected void onError(APIException ex) {
 
@@ -420,8 +427,30 @@ public class RegcardActivity extends BaseActivity {
                 for (AllMessageResponse allMessageResponse : allMessageResponses) {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage("18974931832", null, allMessageResponse.getContent(), null, null);
+                    sendMessageHttp(allMessageResponse);
                 }
             }
         });
     }
+
+    private void sendMessageHttp(AllMessageResponse allMessageResponse) {
+        LoginService.getLoginService(RegcardActivity.this).messageSend(new MessageSendRequest(allMessageResponse.getManager())).subscribe(new BaseSubscriber<RegcardResponse>(this) {
+
+            @Override
+            public void onStart() {
+//                            super.onStart();
+            }
+
+            @Override
+            protected void onError(APIException ex) {
+
+            }
+
+            @Override
+            public void onNext(RegcardResponse regcardResponse) {
+
+            }
+        });
+    }
+
 }

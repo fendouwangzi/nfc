@@ -10,6 +10,7 @@ import rx.Observable;
 import zzg.com.nfc.net.HttpResponse;
 import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.request.LoginRequest;
+import zzg.com.nfc.net.request.MessageSendRequest;
 import zzg.com.nfc.net.request.PayRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.AllMessageResponse;
@@ -40,6 +41,8 @@ public class LoginService extends BaseApiService {
         @POST("/api/cards/regcard")
         public Observable<HttpResponse<RegcardResponse>> regCard(@Body RegcardRequest regcardRequest);
 
+
+
         @POST("/api/orders/orderpay")
         public Observable<HttpResponse<PayResponse>> pay(@Body PayRequest payRequest);
 
@@ -51,6 +54,9 @@ public class LoginService extends BaseApiService {
 
         @GET("/api/timers/message")
         public Observable<HttpResponse<List<AllMessageResponse>>> allMessage();
+
+        @POST("/api/timers/flagmessage")
+        public Observable<HttpResponse<RegcardResponse>> messageSend(@Body MessageSendRequest messageSendRequest);
 
     }
 
@@ -83,6 +89,12 @@ public class LoginService extends BaseApiService {
     public Observable<RegcardResponse> regCard(RegcardRequest regcardRequest) {
         return createRetrofit(LoginService.LoginServiceAPi.class)
                 .regCard(regcardRequest)
+                .compose(this.<RegcardResponse>applySchedulers());
+    }
+
+    public Observable<RegcardResponse> messageSend(MessageSendRequest messageSendRequest) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .messageSend(messageSendRequest)
                 .compose(this.<RegcardResponse>applySchedulers());
     }
 
