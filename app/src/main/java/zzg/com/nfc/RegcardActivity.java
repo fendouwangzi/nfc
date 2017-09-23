@@ -1,6 +1,7 @@
 package zzg.com.nfc;
 
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
@@ -15,13 +16,21 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
 import java.util.List;
 
 import zzg.com.nfc.net.api.LoginService;
 import zzg.com.nfc.net.base.BaseSubscriber;
 import zzg.com.nfc.net.exception.APIException;
+import zzg.com.nfc.net.request.PayRequest;
+import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.OrderDetailsResponse;
+import zzg.com.nfc.net.response.PayResponse;
+import zzg.com.nfc.net.response.RegcardResponse;
 import zzg.com.nfc.ui.base.BaseActivity;
+import zzg.com.nfc.weiget.DividerItemDecoration2;
+import zzg.com.nfc.weiget.InputDialog;
 
 public class RegcardActivity extends BaseActivity {
 
@@ -36,11 +45,12 @@ public class RegcardActivity extends BaseActivity {
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
     private int mCount = 0;
+    private int nowType = 0;
 
     @Override
     protected void setTitleBar() {
         titleBar.getTitle().setText("主界面");
-        titleBar.getLeft_button().setText("订单列表");
+        titleBar.getLeft_button().setText("切换用户");
         titleBar.getRight_button().setText("录入卡");
     }
 
@@ -59,8 +69,12 @@ public class RegcardActivity extends BaseActivity {
             byte[] bytesId = tag.getId();// 获取id数组
             String info = "";
             info += ByteArrayToHexString(bytesId);
-            mText.setText("标签UID:  " + "\n" + info);
             cardNum = info;
+            if(nowType == 1){
+                getOrder(cardNum);
+            }else {
+                mText.setText("卡号:  " + info);
+            }
             Log.d(TAG,"onNewIntent-----------info---"+info);
         }
     }
@@ -208,34 +222,131 @@ public class RegcardActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 //                setIp();
-                recylerView.setVisibility(View.VISIBLE);
-                rel_layout.setVisibility(View.GONE);
+                finish();
             }
         });
         titleBar.getRight_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recylerView.setVisibility(View.GONE);
-                rel_layout.setVisibility(View.VISIBLE);
+                if(nowType == 1){
+                    nowType =2;
+                    titleBar.setRight_button_text("返回订单");
+                    recylerView.setVisibility(View.GONE);
+                    rel_layout.setVisibility(View.VISIBLE);
+                    mText.setText("请把卡贴近手持设备背部" );
+                }else if(nowType == 2){
+                    nowType =1;
+                    titleBar.setRight_button_text("录入卡");
+                    recylerView.setVisibility(View.VISIBLE);
+                    rel_layout.setVisibility(View.GONE);
+                }else if(nowType == 3){
+                    nowType =0;
+                    titleBar.setRight_button_text("录入卡");
+                    cardNum = "";
+                    getOrder("");
+                }
             }
         });
         recylerView.setVisibility(View.GONE);
+        getOrder("");
     }
 
     public void getOrder(String  cardKey){
-            LoginService.getLoginService(this).getorders(cardKey).subscribe(new BaseSubscriber<List<OrderDetailsResponse>>(this) {
-                @Override
-                protected void onError(APIException ex) {
+        if(TextUtils.isEmpty(cardKey)){
+            LoginService.getLoginService(this).getAllOrders().subscribe(new MySubscriber(this));
+        }else {
+            LoginService.getLoginService(this).getorders(cardKey).subscribe(new MySubscriber(this));
+        }
+    }
 
-                }
+    class MySubscriber extends BaseSubscriber<List<OrderDetailsResponse>>{
 
-                @Override
-                public void onNext(List<OrderDetailsResponse> orderDetailsResponses) {
-                    HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,orderDetailsResponses);
-                    recylerView.setAdapter(adaptoor);
-                    recylerView.setVisibility(View.VISIBLE);
-                }
-            });
+        public MySubscriber(BaseActivity context) {
+            super(context);
+        }
+
+        @Override
+        protected void onError(APIException ex) {
+            showMsg(ex.getMessage());
+        }
+
+        @Override
+        public void onNext(List<OrderDetailsResponse> orderDetailsResponses) {
+            if(nowType == 1){
+                nowType = 3;
+                titleBar.getRight_button().setText("所有订单");
+            }else if(nowType == 0){
+                nowType = 1;
+            }
+            HomeAdapter adaptoor = new HomeAdapter(R.layout.order_item,orderDetailsResponses);
+            recylerView.setAdapter(adaptoor);
+            recylerView.setVisibility(View.VISIBLE);
+            final DividerItemDecoration2 dividerItemDecoration=new DividerItemDecoration2(RegcardActivity.this);
+            dividerItemDecoration.setOnlySetItemOffsetsButNoDraw(true);
+            recylerView.addItemDecoration(dividerItemDecoration);
+            if(!TextUtils.isEmpty(cardNum)){
+                adaptoor.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                        OrderDetailsResponse orderDetailsResponse = (OrderDetailsResponse) adapter.getItem(position);
+                        setIp(orderDetailsResponse);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
+    private void setIp(OrderDetailsResponse orderDetailsResponse) {
+        InputDialog inputDialog = new InputDialog.Builder(this)
+                .setTitle("请输入支付密码：")
+                .setInputDefaultText("")
+                .setInputMaxWords(200)
+                .setInputHint("密码")
+                .setPositiveButton("确定", new InputDialog.ButtonActionListener() {
+                    @Override
+                    public void onClick(CharSequence inputText) {
+                            LoginService.getLoginService(RegcardActivity.this).pay(new PayRequest(cardNum,orderDetailsResponse.getOrderCode(),inputText.toString())).subscribe(new BaseSubscriber<PayResponse>(RegcardActivity.this) {
+                                @Override
+                                protected void onError(APIException ex) {
+                                            showMsg(ex.getMessage());
+                                }
+
+                                @Override
+                                public void onNext(PayResponse payResponse) {
+                                        showMsg("支付成功");
+                                }
+                            });
+                    }
+                })
+                .setNegativeButton("取消", new InputDialog.ButtonActionListener() {
+                    @Override
+                    public void onClick(CharSequence inputText) {
+                        // TODO
+                    }
+                })
+                .setOnCancelListener(new InputDialog.OnCancelListener() {
+                    @Override
+                    public void onCancel(CharSequence inputText) {
+                        // TODO
+                    }
+                })
+                .interceptButtonAction(new InputDialog.ButtonActionIntercepter() { // 拦截按钮行为
+                    @Override
+                    public boolean onInterceptButtonAction(int whichButton, CharSequence inputText) {
+                        if ("/sdcard/my".equals(inputText) && whichButton == DialogInterface.BUTTON_POSITIVE) {
+                            // TODO 此文件夹已存在，在此做相应的提示处理
+                            // 以及return true拦截此按钮默认行为
+                            return true;
+                        }
+                        return false;
+                    }
+                })
+                .show();
     }
 
     public void submit(View view){
@@ -243,20 +354,20 @@ public class RegcardActivity extends BaseActivity {
             showMsg("请先刷卡");
             return;
         }
-        getOrder(cardNum);
-//        LoginService.getLoginService(this).regCard(new RegcardRequest(cardNum)).subscribe(new BaseSubscriber<RegcardResponse>(this) {
-//            @Override
-//            protected void onError(APIException ex) {
-//                        showMsg(ex.getMessage());
-//            }
-//
-//            @Override
-//            public void onNext(RegcardResponse regcardResponse) {
-//                getOrder(cardNum);
-//                cardNum = "";
-//
-//            }
-//        });
+//        getOrder(cardNum);
+        LoginService.getLoginService(this).regCard(new RegcardRequest(cardNum)).subscribe(new BaseSubscriber<RegcardResponse>(this) {
+            @Override
+            protected void onError(APIException ex) {
+                        showMsg(ex.getMessage());
+            }
+
+            @Override
+            public void onNext(RegcardResponse regcardResponse) {
+                showMsg("录入成功");
+                mText.setText("请把卡贴近手持设备背部" );
+                cardNum = "";
+            }
+        });
     }
 
 }

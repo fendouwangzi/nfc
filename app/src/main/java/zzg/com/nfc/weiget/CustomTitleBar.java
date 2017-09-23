@@ -117,7 +117,7 @@ public class CustomTitleBar extends LinearLayout {
         title_textColor = typedArray.getColor(R.styleable.CustomTitleBar_title_textColor, Color.BLACK);
         title_textSize = typedArray.getColor(R.styleable.CustomTitleBar_title_textSize, 22);
         /**返回按钮相关*/
-        left_button_imageId = typedArray.getResourceId(R.styleable.CustomTitleBar_left_button_image, R.drawable.arrow_left);
+        left_button_imageId = typedArray.getResourceId(R.styleable.CustomTitleBar_left_button_image, 0);
         left_button_text = typedArray.getString(R.styleable.CustomTitleBar_left_button_text);
         left_button_textColor = typedArray.getColor(R.styleable.CustomTitleBar_left_button_textColor, Color.WHITE);
         left_button_textSize = typedArray.getColor(R.styleable.CustomTitleBar_left_button_textSize, 20);

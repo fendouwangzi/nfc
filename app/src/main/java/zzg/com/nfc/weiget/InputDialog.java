@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -185,6 +186,10 @@ public class InputDialog {
         return editable.toString();
     }
 
+    public EditText getEditText() {
+        return editText;
+    }
+
     public static class Builder {
 
         private InputDialog inputDialog; // the proxy dialog
@@ -204,6 +209,7 @@ public class InputDialog {
         private CharSequence inputDefaultText;
 
         private CharSequence inputHint;
+        private boolean password = true;
         private int inputMaxWords = -1;
         private boolean interceptAutoPopupInputMethod;
 
@@ -229,6 +235,11 @@ public class InputDialog {
 
         public Builder setInputHint(CharSequence text) {
             inputHint = text;
+            return this;
+        }
+
+        public Builder hidePassword(boolean password) {
+            this.password = password;
             return this;
         }
 
@@ -523,6 +534,9 @@ public class InputDialog {
             EditText input = obtainEditText(dialog);
             if (inputMaxWords >= 0) {
                 input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(inputMaxWords)});
+            }
+            if(!password){
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
             }
             if (!TextUtils.isEmpty(inputDefaultText)) {
                 input.setText(inputDefaultText);

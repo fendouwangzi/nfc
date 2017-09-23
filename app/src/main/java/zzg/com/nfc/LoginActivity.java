@@ -40,7 +40,7 @@ public class LoginActivity extends BaseActivity  {
     protected void setTitleBar() {
         titleBar.getTitle().setText("客户端");
 //        titleBar.setTitleSubText(getSubText());
-        titleBar.getRight_button().setBackgroundResource(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
+//        titleBar.getRight_button().setBackgroundResource(isWhite ? R.drawable.ic_menu : R.drawable.ic_menu_white);
         titleBar.getRight_button().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,9 +53,10 @@ public class LoginActivity extends BaseActivity  {
     private void setIp() {
         new InputDialog.Builder(this)
                 .setTitle("设置服务器地址")
-                .setInputDefaultText("http://")
+                .setInputDefaultText(BaseApiService.DEV_URL)
                 .setInputMaxWords(200)
                 .setInputHint("http://")
+                .hidePassword(false)
                 .setPositiveButton("确定", new InputDialog.ButtonActionListener() {
                     @Override
                     public void onClick(CharSequence inputText) {
@@ -207,6 +208,7 @@ public class LoginActivity extends BaseActivity  {
                 @Override
                 public void onNext(LoginResponse loginResponse) {
                     MyApplication.getInstance().userInfo = loginResponse;
+                    dismissProgressDialog();
                         LoginActivity.this.startActivity(new Intent(LoginActivity.this,RegcardActivity.class));
                 }
             });

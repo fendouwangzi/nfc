@@ -10,9 +10,11 @@ import rx.Observable;
 import zzg.com.nfc.net.HttpResponse;
 import zzg.com.nfc.net.base.BaseApiService;
 import zzg.com.nfc.net.request.LoginRequest;
+import zzg.com.nfc.net.request.PayRequest;
 import zzg.com.nfc.net.request.RegcardRequest;
 import zzg.com.nfc.net.response.LoginResponse;
 import zzg.com.nfc.net.response.OrderDetailsResponse;
+import zzg.com.nfc.net.response.PayResponse;
 import zzg.com.nfc.net.response.RefreshTokenResponse;
 import zzg.com.nfc.net.response.RegcardResponse;
 import zzg.com.nfc.ui.base.BaseActivity;
@@ -37,8 +39,15 @@ public class LoginService extends BaseApiService {
         @POST("/api/cards/regcard")
         public Observable<HttpResponse<RegcardResponse>> regCard(@Body RegcardRequest regcardRequest);
 
+        @POST("/api/orders/orderpay")
+        public Observable<HttpResponse<PayResponse>> pay(@Body PayRequest payRequest);
+
         @GET("/api/orders/getorders/{cardkey}")
         public Observable<HttpResponse<List<OrderDetailsResponse>>> getorders(@Path("cardkey") String cardkey);
+
+        @GET("/api/orders/orders")
+        public Observable<HttpResponse<List<OrderDetailsResponse>>> getAllOrders();
+
     }
 
     private static LoginService INSTANCE;
@@ -73,9 +82,21 @@ public class LoginService extends BaseApiService {
                 .compose(this.<RegcardResponse>applySchedulers());
     }
 
+    public Observable<PayResponse> pay(PayRequest payRequest) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .pay(payRequest)
+                .compose(this.<PayResponse>applySchedulers());
+    }
+
     public Observable<List<OrderDetailsResponse>> getorders(String cardkey) {
         return createRetrofit(LoginService.LoginServiceAPi.class)
                 .getorders(cardkey)
+                .compose(this.<List<OrderDetailsResponse>>applySchedulers());
+    }
+
+    public Observable<List<OrderDetailsResponse>> getAllOrders( ) {
+        return createRetrofit(LoginService.LoginServiceAPi.class)
+                .getAllOrders()
                 .compose(this.<List<OrderDetailsResponse>>applySchedulers());
     }
 }

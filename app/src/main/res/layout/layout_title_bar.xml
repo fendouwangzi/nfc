@@ -21,6 +21,8 @@
     android:layout_height="48dp"
     app:left_button_textColor="@color/colorTextBlack"
     app:right_button_textColor="@color/colorTextBlack"
+    app:show_left_button="true"
+    app:show_right_button="true"
     app:title_textColor="@color/colorTextBlack">
 
 </zzg.com.nfc.weiget.CustomTitleBar>

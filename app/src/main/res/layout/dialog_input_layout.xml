@@ -12,6 +12,7 @@
         android:layout_marginLeft="31dp"
         android:layout_marginRight="31dp"
         android:gravity="center_vertical"
+        android:inputType="textPassword"
         android:background="@null"
         android:singleLine="true"
         android:textColor="#222222"
